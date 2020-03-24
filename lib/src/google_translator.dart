@@ -1,9 +1,11 @@
 import 'dart:async';
-import 'dart:convert' show jsonDecode;
+
+import 'package:html/dom.dart';
+import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:translator/src/langs/languages.dart';
+
 import './tokens/token_provider_interface.dart';
-import './tokens/google_token_gen.dart';
 
 ///
 /// This library is a Dart implementation of Free Google Translate API
@@ -14,7 +16,9 @@ import './tokens/google_token_gen.dart';
 class GoogleTranslator {
   GoogleTranslator();
 
-  var _baseUrl = 'https://translate.googleapis.com/translate_a/single';
+  // var _baseUrl = 'https://translate.googleapis.com/translate_a/single';
+  var _baseUrl = 'https://translate.google.cn/m';
+
   TokenProviderInterface tokenProvider;
 
   /// Translates texts from specified language to another
@@ -27,7 +31,7 @@ class GoogleTranslator {
     });
 
     /// New tokenProvider -> uses GoogleTokenGenerator for free API
-    tokenProvider = GoogleTokenGenerator();
+    // tokenProvider = GoogleTokenGenerator();
     try {
       var parameters = {
         'client': 't',
@@ -36,7 +40,7 @@ class GoogleTranslator {
         'dt': 't',
         'ie': 'UTF-8',
         'oe': 'UTF-8',
-        'tk': tokenProvider.generateToken(sourceText),
+        // 'tk': tokenProvider.generateToken(sourceText),
         'q': sourceText
       };
 
@@ -59,14 +63,18 @@ class GoogleTranslator {
         return null;
       }
 
-      final jsonData = jsonDecode(data.body);
+      // final jsonData = jsonDecode(data.body);
 
-      final sb = StringBuffer();
-      for (var c = 0; c < jsonData[0].length; c++) {
-        sb.write(jsonData[0][c][0]);
-      }
+      // final sb = StringBuffer();
+      // for (var c = 0; c < jsonData[0].length; c++) {
+      //   sb.write(jsonData[0][c][0]);
+      // }
 
-      return sb.toString();
+      Document document = parse(data.body);
+      // <div dir="ltr" class="t0">你好吗</div>
+      var result = document.querySelector('[class="t0"]').text;
+
+      return result;
     } on Error catch (err) {
       print('Error: $err\n${err.stackTrace}');
       return null;

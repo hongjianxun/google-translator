@@ -16,7 +16,7 @@ void main() async {
   print('Translated: ${await input.translate(to: 'en')}');
 
   // For countries that default base URL doesn't work
-  translator.baseUrl = "https://translate.google.cn/translate_a/single";
+  // translator.baseUrl = "https://translate.google.cn/translate_a/single";
   translator.translateAndPrint("This means 'testing' in chinese", to: 'zh-cn');
   //prints 这意味着用中文'测试'
 
