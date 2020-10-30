@@ -24,6 +24,21 @@ class GoogleTranslator {
   /// Translates texts from specified language to another
   Future<String> translate(String sourceText,
       {String from = 'auto', String to = 'en'}) async {
+    if (sourceText == null || sourceText.length == 0) return "";
+    int maxRequestCount = 10;
+    int requestCount = 0;
+    String returnString;
+    do {
+      requestCount++;
+      returnString =
+          await this.translateFromGoogle(sourceText, from: from, to: to);
+    } while (returnString == null && requestCount < maxRequestCount);
+    return returnString ?? "";
+  }
+
+  /// Translates texts from specified language to another
+  Future<String> translateFromGoogle(String sourceText,
+      {from = 'auto', to = 'en'}) async {
     /// Assertion for supported language
     [from, to].forEach((language) {
       assert(Languages.isSupported(language),
